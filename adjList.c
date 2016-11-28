@@ -5,7 +5,7 @@ typedef struct node{
     int val;
     struct node *next;
 }node;
-
+//note node *list[] is equivalent to **list
 void addEdge(node *list[], int b, int c){
     node *temp=(node *)malloc(sizeof(node));
     temp->next=list[b];
