@@ -9,98 +9,92 @@ typedef struct node
     struct node *next;
 }node;
 
-void insert(node** head, int val, float dis);
-
-void constgraph(node** arr, int a, int b, float dis)
-{
-    insert(&arr[a], b, dis);
-    insert(&arr[b], a, dis);
+void insert(node* list[], int a, int b, float dis){
+    
+    node *temp=(node*)malloc(sizeof(node));
+    temp->n=b;
+    temp->next=NULL;
+    temp->dis=dis;
+        
+    if(list[a]==NULL){
+        list[a]=temp;
+    }
+    else{
+        node *p;
+        p=list[a];
+        while( p->next!=NULL ){
+            p=p->next;
+        }
+        p->next=temp;
+    }
 }
+
 int main()
 {
-    // Your code goes here
+    // make graph
     int n, m, n1, n2;
     scanf("%d %d", &n, &m);
-    node* points[n];
+    node* list[n];
     int i;
     for(i=0;i<n;++i)
     {
-        points[i]=NULL;
+        list[i]=NULL;
     }
     float dis;
     for(i=0;i<m;++i)
     {
         scanf("%d %d %f", &n1, &n2, &dis);
-        constgraph(points, n1, n2, dis);
+        insert(list, n1, n2, dis);
+        insert(list, n2, n1, dis);
     }
+    
+    
+    //do prims MST
     node* p;
-    float c[n];
-    int q[n], noelem=0;
-    for(i=0;i<n;++i)
-    {
-        q[i]=1;
-        c[i]=INFINITY;
+    float cost[n];
+    int visited[n];
+    for(i=0;i<n;++i){
+        visited[i]=0;
+        cost[i]=INFINITY;
     }
-    c[0]=0;
-    i=0;
+    int start, no_elem=0;
+    start=0;
+    cost[start]=0;
     int j;
-    while(noelem<n)
+    while(no_elem<n)
     {
-        q[i]=0;
-        ++noelem;
-        for(p=points[i];p!=NULL;p=p->next)
+        visited[start]=1;
+        ++no_elem;
+        for(p=list[start];p!=NULL;p=p->next)
         {
-            if(p->dis<c[p->n]&& q[p->n])
+            if(p->dis < cost[p->n]&& !visited[p->n])
             {
-                c[p->n]=p->dis;
+                cost[p->n]=p->dis;
             }
         }
         float min=INFINITY;
         for(j=0;j<n;++j)
         {
-            if(q[j])
+            if(!visited[j])
             {
-                if(min>c[j])
+                if(min>cost[j])
                 {
-                    min=c[j];
-                    i=j;
+                    min=cost[j];
+                    start=j;
                 }
             }
         }
     }
+    
     float tot=0;
-    for(i=0;i<n;++i)
-    {
-        tot+=c[i];
+    for(i=0;i<n;++i){
+        tot+=cost[i];
     }
+    
     printf("%g", tot);
+    
     return 0;
 }
-
-void insert(node** head, int val, float dis)
-{
-    if(*head==NULL)
-    {
-        *head=(node*)malloc(sizeof(node));
-        (*head)->n=val;
-        (*head)->next=NULL;
-        (*head)->dis=dis;
-    }
-    else if((*head)->n>val)
-    {
-        node* ptr=*head;
-        *head=(node*)malloc(sizeof(node));
-        (*head)->n=val;
-        (*head)->next=ptr;
-        (*head)->dis=dis;
-    }
-    else
-    {
-        insert(&((*head)->next), val, dis);
-    }
-}
-
-
 
 
 
