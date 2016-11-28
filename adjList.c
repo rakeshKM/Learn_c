@@ -19,6 +19,16 @@ struct Graph
     int V;
     struct AdjList* array;
 };
+
+// A utility function to create a new adjacency list node
+struct AdjListNode* newAdjListNode(int dest)
+{
+    struct AdjListNode* newNode =
+            (struct AdjListNode*) malloc(sizeof(struct AdjListNode));
+    newNode->dest = dest;
+    newNode->next = NULL;
+    return newNode;
+}
  
 // A utility function that creates a graph of V vertices
 struct Graph* createGraph(int V)
@@ -42,23 +52,13 @@ void addEdge(struct Graph* graph, int src, int dest)
 {
     // Add an edge from src to dest.  A new node is added to the adjacency
     // list of src.  The node is added at the begining
-    struct AdjListNode* newNode = newAdjListNode(dest);
-    
-    struct AdjListNode* temp = graph->array[src].head;
-    if(temp==NULL){
-        graph->array[].head = newNode;
-    }
-    struct AdjListNode* temp2 = temp->next;
-        while (temp2->dest < dest)
-        {
-            temp =temp->next;
-            temp2 =temp2->next;
-        }
-   
-    
-    newNode = newAdjListNode(src);
-    newNode->next = graph->array[dest].head;
-    graph->array[dest].head = newNode;
+    struct AdjListNode*  newNode = newAdjListNode(dest);
+    newNode->next = graph->array[src].head;
+    graph->array[src].head = newNode;
+
+    struct AdjListNode* newNode2 = newAdjListNode(src);
+    newNode2->next = graph->array[dest].head;
+    graph->array[dest].head = newNode2;
 }
 
  
