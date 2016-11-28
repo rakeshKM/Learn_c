@@ -1,111 +1,100 @@
 #include <stdio.h>
 #include <ue101.h>
-
-typedef struct node
-{
+#include <stdlib.h>
+#include <malloc.h>
+typedef struct node{
     int n;
-    struct node *next, *prev;
+    struct node *next;
 }node;
-void insert(node** head, int val)
-{
-    if(*head==NULL)
-    {
-        *head=(node*)malloc(sizeof(node));
-        (*head)->n=val;
-        (*head)->next=NULL;
+
+void insert(node* list[], int a, int b){
+    
+    node *temp=(node*)malloc(sizeof(node));
+    temp->n=b;
+    temp->next=NULL;
+        
+    if(list[a]==NULL){
+        list[a]=temp;
     }
-    else if((*head)->n>val)
-    {
-        node* ptr=*head;
-        *head=(node*)malloc(sizeof(node));
-        (*head)->n=val;
-        (*head)->next=ptr;
-    }
-    else
-    {
-        insert(&((*head)->next), val);
+    else{
+        node *p;
+        p=list[a];
+        while( p->next!=NULL ){
+            p=p->next;
+        }
+        p->next=temp;
     }
 }
-void push(node **first, node **last, int t)
+node *front = NULL,*rear = NULL;
+void push(int value)
 {
-    node *ptr= (node*)malloc(sizeof(node));
-    ptr->n=t;
-    ptr->next=NULL;
-    if(*last==NULL)//empty list
-    {
-        *first=*last=ptr;
-        (*last)->prev=(*last)->next=NULL;
-        return;
-    }
-    ptr->prev=*last;
-    (*last)->next=ptr;
-    *last=ptr;
+   node *newNode=(node*)malloc(sizeof(node));
+   newNode->n = value;
+   newNode -> next = NULL;
+   if(front == NULL)
+      front = rear = newNode;
+   else{
+      rear -> next = newNode;
+      rear = newNode;
+   }
 }
-void pop(node **first, node **last)
-{
-    node *ptr=(*first)->next;
-    if(ptr==NULL)
-    {
-        *last=*first=NULL;
-        return;
-    }
-    ptr->prev=NULL;
-    *first=ptr;
+void pop(){
+   if(front == NULL)
+      printf("\nQueue is Empty!!!\n");
+   else{
+      node *temp = front;
+      front = front -> next;
+      //free(temp);
+   }
 }
-void bfs(node** arr, int *dis,  int point)
+
+void bfs(node* list[], int *dis,  int point)
 {
-    node *head=NULL, *tail=NULL;
-    push(&head, &tail, point);
+    
+    push(point);
     dis[point]=0;
-    while(head!=NULL)
+    while(front!=NULL)
     {
-        node *q=head;
-        pop(&head, &tail);
-        node *p =arr[q->n];
+        node *q=front;
+        pop();
+        node *p =list[q->n];
         for(;p!=NULL;p=p->next)
         {
             if(dis[p->n]==-1)
             {
-                push(&head, &tail, p->n);
+                push(p->n);
                 dis[p->n]=dis[q->n]+1;
             }
         }
         free(q);
     }
 }
-void constgraph(node** arr, int a, int b)
-{
-    insert(&arr[a], b);
-    insert(&arr[b], a);
-}
+
 int main()
 {
-    // Your code goes here
-    int n, m, n1, n2, q;
+    int n, m, n1, n2,q;
     scanf("%d %d", &n, &m);
-    int dis[n];
-    node* points[n];
+    node* list[n];
     int i;
     for(i=0;i<n;++i)
     {
-        points[i]=NULL;
+        list[i]=NULL;
     }
     for(i=0;i<m;++i)
     {
         scanf("%d %d", &n1, &n2);
-        constgraph(points, n1, n2);
+        insert(list, n1, n2);
+        insert(list, n2, n1);
     }
+    int dis[n];
     node* p;
     scanf("%d", &q);
-    while(q!=-1)
-    {
-        for(i=0;i<n;++i)
-        {
+    while(q!=-1){
+        for(i=0;i<n;++i){
             dis[i]=-1;
         }
-        bfs(points, dis, q);
-        for(i=0;i<n;++i)
-        {
+        bfs(list, dis, q);
+        for(i=0;i<n;++i){
             printf("%d ", dis[i]);
         }
         printf("\n");
