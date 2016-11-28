@@ -24,6 +24,8 @@ void insert(node* list[], int a, int b){
         p->next=temp;
     }
 }
+//http://btechsmartclass.com/DS/U2_T9.html
+//http://www.sanfoundry.com/c-program-queue-using-linked-list/
 node *front = NULL,*rear = NULL;
 void push(int value){
    node *newNode=(node*)malloc(sizeof(node));
